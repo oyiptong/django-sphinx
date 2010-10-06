@@ -201,6 +201,7 @@ class SphinxQuerySet(object):
         self._excludes              = {}
         self._extra                 = {}
         self._query                 = ''
+        self._select                = ''
         self.__metadata             = None
         self._offset                = 0
         self._limit                 = 20
@@ -325,6 +326,9 @@ class SphinxQuerySet(object):
     def geoanchor(self, lat_attr, lng_attr, lat, lng):
         assert sphinxapi.VER_COMMAND_SEARCH >= 0x113, "You must upgrade sphinxapi to version 0.98 to use Geo Anchoring."
         return self._clone(_anchor=(lat_attr, lng_attr, float(lat), float(lng)))
+
+    def select(self, select_str):
+        return self._clone(_select=select_str)
 
     # this actually does nothing, its just a passthru to
     # keep things looking/working generally the same
@@ -500,6 +504,9 @@ class SphinxQuerySet(object):
         if self._excludes:
             params.append('excludes=%s' % (self._excludes,))
             _handle_filters(self._excludes, True)
+
+        if self._select:
+            client.SetSelect(self._select)
         
         if self._groupby:
             params.append('groupby=%s' % (self._groupby,))
