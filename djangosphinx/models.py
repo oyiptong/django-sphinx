@@ -237,6 +237,12 @@ class SphinxQuerySet(object):
         else:
             return '<%s instance>' % (self.__class__.__name__,)
 
+    def __getstate__(self):
+        dict = self.__dict__.copy()
+        if self._result_cache:
+            dict['_result_cache'] = None
+        return dict
+
     def __len__(self):
         return self.count()
         
