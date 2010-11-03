@@ -241,6 +241,8 @@ class SphinxQuerySet(object):
         dict = self.__dict__.copy()
         if self._result_cache:
             dict['_result_cache'] = None
+            dict['_metadata'] = {}
+            dict['_SphinxQuerySet__metadata'] = {}
         return dict
 
     def __len__(self):
@@ -416,6 +418,10 @@ class SphinxQuerySet(object):
         c.__dict__.update(self.__dict__.copy())
         for k, v in kwargs.iteritems():
             setattr(c, k, v)
+        # reset cached data
+        c._result_cache = None
+        c.__metadata = {}
+        c._SphinxQuerySet__metadata = {}
         return c
     
     def _sphinx(self):
